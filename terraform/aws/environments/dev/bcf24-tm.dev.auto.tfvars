@@ -32,12 +32,12 @@ private_subnets = [
 cluster_name_identifer     = "v1"
 eks_version                = "1.31"
 ami_type                   = "AL2_x86_64"
-instance_types             = ["t3.micro"]
+instance_types             = ["t3a.medium"]
 instance_capacity_type     = "ON_DEMAND"
 instance_storage_size      = 20
 instance_storage_type      = "gp3"
 scaling_desired_size       = 2
-scaling_max_size           = 4
+scaling_max_size           = 8
 scaling_min_size           = 2
 
 node_group_max_unavailable = 1
@@ -46,11 +46,8 @@ iam_access_entries = [
   {
     policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
     principal_arn = "arn:aws:iam::863518452741:user/galib"
-  },
-  # {
-  #   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  #   principal_arn = ""
-  # }
+  }
+  
 ]
 
 eks_addons = [

@@ -4,7 +4,7 @@ LABEL maintainer="Projects BD"
 
 WORKDIR /app/registration
 
-COPY ./requirements.txt .
+COPY ./registration/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir --upgrade setuptools \

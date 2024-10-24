@@ -20,5 +20,5 @@ from .views import HealthCheckView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('healthcheck/', HealthCheckView.as_view(),name='health check'),
-    path('order/',include('order_management.urls'))
+    path('v1/order/',include('order_management.urls'))
 ]

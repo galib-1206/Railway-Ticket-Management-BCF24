@@ -51,6 +51,15 @@ from .models import Profile
 from .serializers import UserRegistrationSerializer, OTPVerificationSerializer, PasswordSetupSerializer
 import random
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from .models import Profile
+from .serializers import OTPVerificationSerializer
+import random
+
 class OTPVerificationView(APIView):
     def post(self, request):
         serializer = OTPVerificationSerializer(data=request.data)
@@ -61,25 +70,27 @@ class OTPVerificationView(APIView):
             try:
                 user = User.objects.get(email=email)
                 if user.profile.otp == otp:
-                    user.profile.otp_verified = True
-                    user.profile.generate_reset_token()  # Generate a reset token
-                    user.profile.save()
+                    if user.profile.is_otp_valid():
+                        user.profile.otp_verified = True
+                        user.profile.generate_reset_token()  # Generate a reset token
+                        user.profile.save()
 
-                    # Send token via email
-                    send_mail(
-                        'Your Password Reset Token',
-                        f'Your reset token is {user.profile.reset_token}',
-                        'admin@myapp.com',
-                        [email],
-                        fail_silently=False,
-                    )
+                        # Send token via email
+                        send_mail(
+                            'Your Password Reset Token',
+                            f'Your reset token is {user.profile.reset_token}',
+                            'admin@myapp.com',
+                            [email],
+                            fail_silently=False,
+                        )
 
-                    return Response({'detail': 'OTP verified successfully. Reset token sent to email.'}, status=status.HTTP_200_OK)
+                        return Response({'detail': 'OTP verified successfully. Reset token sent to email.'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'detail': 'OTP expired.'}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'detail': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
             except User.DoesNotExist:
                 return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # accounts/views.py (only modified section)
 class PasswordSetupView(APIView):
@@ -108,3 +119,21 @@ class PasswordSetupView(APIView):
             except User.DoesNotExist:
                 return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class GenerateOTPView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            user = User.objects.get(email=email)
+            user.profile.generate_otp()  # Generate a new OTP
+            send_mail(
+                'Your OTP',
+                f'Your OTP is {user.profile.otp}',
+                'admin@myapp.com',
+                [email],
+                fail_silently=False,
+            )
+            return Response({'detail': 'OTP sent to email.'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+

@@ -36,15 +36,15 @@ class ProcessPaymentView(APIView):
         lock_key = f"lock:{train_id}:{ticket_class}:{user_id}"
             # Check if the lock key still exists in Redis
         if redis_client.exists(lock_key):
-            status = "successful"     
+            payment_status = "success"     
         else:
             unlock_db_seats(lock_key)
-            status = "failed"
+            payment_status = "failed"
 
         unlock_seats(lock_key)
         payment = Payment.objects.create(
             order_id=order_id,
-            status=status,
+            status=payment_status,
             amount=price*number_of_seats
         )
         payment.save()

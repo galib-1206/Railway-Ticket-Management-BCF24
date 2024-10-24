@@ -134,8 +134,8 @@ class ConfirmedOrderView(APIView):
 
         if not order_id or not token:
             return Response({'detail': 'Order ID and token are required.'}, status=status.HTTP_400_BAD_REQUEST)
-        order = Order.objects.get(order_id=order_id)
-        if payment_status is not True:
+        order = Order.objects.get(id=order_id)
+        if payment_status == 'success':
             order.status = 'CANCELLED'
             order.save()
             return Response({'detail': 'Payment status must be true to confirm the order.'}, status=status.HTTP_400_BAD_REQUEST)

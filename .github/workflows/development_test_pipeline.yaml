@@ -45,20 +45,11 @@ jobs:
         pylint $(find . -name "*.py") --fail-under 8 --fail-on E | tail -n 2 | awk 'NF' >> report.txt || true
         echo "" >> report.txt || true
 
-    - name: Run SonarQube Scan
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # GitHub secret for SonarQube authentication
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  # GitHub secret for SonarQube host URL
-      run: |
-        echo "Running SonarQube Scan"
-        sonar-scanner \
-          -Dsonar.projectKey=your_project_key \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=$SONAR_HOST_URL \
-          -Dsonar.login=$SONAR_TOKEN
-
-    - name: Comment pylint report on PR
-      if: ${{ github.event_name == 'pull_request' }}
-      uses: marocchino/sticky-pull-request-comment@v2
+    - name: Check code quality with sonarqube
+    - uses: actions/checkout@v2
       with:
-        path: report.txt
+        fetch-depth: 0
+    - uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

@@ -18,7 +18,7 @@ spec:
         - name: registration
           image: 863518452741.dkr.ecr.ap-south-1.amazonaws.com/bcf24/registration:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 8001
           envFrom:
             - secretRef:
                 name: registration-service-app-settings
@@ -46,7 +46,7 @@ spec:
   type: ClusterIP
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 8001
       protocol: TCP
   selector:
     app: registration
@@ -62,5 +62,5 @@ spec:
     kind: Deployment
     name: registration-deployment
   minReplicas: 1
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 50      
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 70     

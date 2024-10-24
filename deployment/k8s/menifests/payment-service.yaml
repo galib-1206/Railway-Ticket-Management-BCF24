@@ -18,7 +18,7 @@ spec:
         - name: payment
           image: 863518452741.dkr.ecr.ap-south-1.amazonaws.com/bcf24/payment:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 8004
           envFrom:
             - secretRef:
                 name: payment-service-app-settings
@@ -46,7 +46,7 @@ spec:
   type: ClusterIP
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 8004
       protocol: TCP
   selector:
     app: payment
@@ -62,5 +62,5 @@ spec:
     kind: Deployment
     name: payment-deployment
   minReplicas: 1
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 50      
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 70     

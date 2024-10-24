@@ -6,6 +6,9 @@ from .serializers import UserRegistrationSerializer, OTPVerificationSerializer, 
 from django.contrib.auth.models import User
 from rest_framework import status
 from django.core.mail import send_mail
+from rest_framework_simplejwt.views import TokenVerifyView
+from rest_framework_simplejwt.backends import TokenBackend
+from rest_framework_simplejwt.settings import api_settings
 class UserRegistrationView(APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -86,5 +89,30 @@ class PasswordSetupView(APIView):
             except User.DoesNotExist:
                 return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class CustomTokenVerifyView(TokenVerifyView):
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('token')
+
+        # Verify the token as per default behavior
+        serializer = self.get_serializer(data={'token': token})
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            # Decode the token to get user information
+            token_backend = TokenBackend(algorithm=api_settings.ALGORITHM,signing_key=api_settings.SIGNING_KEY)
+            decoded_token = token_backend.decode(token, verify=True)
+            # Extract the user_id from the decoded token
+            user_id = decoded_token.get('user_id')
+            
+            # Return success response with user_id included
+            return Response({
+                'user_id': user_id
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'detail': 'Token is invalid or expired'}, status=status.HTTP_401_UNAUTHORIZED)
     
 

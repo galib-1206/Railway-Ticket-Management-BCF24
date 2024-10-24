@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-soy$82#x4-qmqqhy5^s$+c^$=j*^==*hwx%q0q3$k2w8k)-gz&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['api.projectsbd.me']
+ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
 
 
 # Application definition
@@ -42,8 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'payment_management'
 ]
-
+REDIS_HOST = config('REDIS_HOST')
+REDIS_PORT = 6379
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,7 +81,6 @@ WSGI_APPLICATION = 'payment.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = json.loads(os.getenv('DATABASES'))
 DATABASES = json.loads(os.getenv('DATABASES'))
 
 

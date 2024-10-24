@@ -29,9 +29,10 @@ SECRET_KEY = 'django-insecure-p7vv1#a%n#^&(h5a4b-q-$21__h&kp55yg8b4($5n=e%z2g2#m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['api.projectsbd.me']
+ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
 
-
+REDIS_HOST = config('REDIS_HOST')
+REDIS_PORT = 6379
 # Application definition
 
 INSTALLED_APPS = [

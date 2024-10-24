@@ -6,8 +6,6 @@ class Train(models.Model):
     route = models.CharField(max_length=255)
     journey_time = models.DurationField()
     arrival_time = models.TimeField()
-    total_seats = models.IntegerField()
-    available_seats = models.IntegerField()
 
     def __str__(self):
         return self.train_name

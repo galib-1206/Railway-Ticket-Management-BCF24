@@ -45,6 +45,12 @@ jobs:
         pylint $(find . -name "*.py") --fail-under 8 --fail-on E | tail -n 2 | awk 'NF' >> report.txt || true
         echo "" >> report.txt || true
 
+    - name: Comment pylint report on PR
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        path: report.txt
+
     - name: Check out SonarQube code
       uses: actions/checkout@v2
       with:

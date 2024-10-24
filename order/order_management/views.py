@@ -18,7 +18,7 @@ class LockSeatsView(APIView):
         serializer = LockSeatsSerializer(data=request.data)
         
         # Verify the token with the auth server
-        auth_url = f"{config('REGISTRATION_SERVER_URL')}/user/verify/"  # Replace with your API URL
+        auth_url = f"{config('REGISTRATION_SERVER_URL')}/verify/"
         body = {
             'token': request.data.get('token')
         }
@@ -60,7 +60,7 @@ class LockSeatsView(APIView):
 class GiveOrderView(APIView):
     def post(self, request):
         serializer = ConfirmOrderSerializer(data=request.data)
-        auth_url = f"{config('REGISTRATION_SERVER_URL')}/user/verify/"  # Replace with your API URL
+        auth_url = f"{config('REGISTRATION_SERVER_URL')}/verify/"  # Replace with your API URL
         body = {
             'token': request.data.get('token')
         }
@@ -100,7 +100,7 @@ class OrderDetailView(APIView):
             return Response({'detail': 'Order ID and token are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Verify token with the auth server
-        auth_url = f"{config('REGISTRATION_SERVER_URL')}/user/verify/"  # Replace with your API URL
+        auth_url = f"{config('REGISTRATION_SERVER_URL')}/verify/"  # Replace with your API URL
         auth_response = requests.post(auth_url, json={'token': token})
 
         if auth_response.status_code != 200:
@@ -113,7 +113,7 @@ class OrderDetailView(APIView):
 
         try:
             # Get the order by order_id
-            order = Order.objects.get(order_id=order_id)
+            order = Order.objects.get(id=order_id)
 
             # Check if the user_id matches
             if order.user_id != user_id:
@@ -141,7 +141,7 @@ class ConfirmedOrderView(APIView):
             return Response({'detail': 'Payment status must be true to confirm the order.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Verify token with the auth server
-        auth_url = f"{config('REGISTRATION_SERVER_URL')}/user/verify/"  # Replace with your API URL
+        auth_url = f"{config('REGISTRATION_SERVER_URL')}/verify/"  # Replace with your API URL
         auth_response = requests.post(auth_url, json={'token': token})
 
         if auth_response.status_code != 200:

@@ -5,19 +5,20 @@ from django.conf import settings
 
 def redis_key_expiry_listener():
     pubsub = redis_client.pubsub()
-    pubsub.psubscribe('__keyevent@0__:expired')  # Listen for expired events on Redis DB 0
+    pubsub.psubscribe('__keyevent@0__:expired')
 
     for message in pubsub.listen():
         if message['type'] == 'pmessage':
             expired_key = message['data'].decode('utf-8')
-            process_expired_key(expired_key)
+            if expired_key.startswith("lock:"):
+                backup_key = f"backup:{expired_key}"
+                process_expired_key(backup_key)
 
 def process_expired_key(expired_key):
     from .models import TicketClass
-    # Parse the key to extract train ID, ticket class, and user ID
-    # Assuming keys are stored as "lock:{train_id}:{ticket_class}:{user_id}"
+    
     key_parts = expired_key.split(":")
-    number_of_seats = redis_client.hget(expired_key)
+    number_of_seats = redis_client.get(expired_key)
     if number_of_seats:
         number_of_seats = int(number_of_seats)
     if len(key_parts) == 4 and key_parts[0] == "lock":

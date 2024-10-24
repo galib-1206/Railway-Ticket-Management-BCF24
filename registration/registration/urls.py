@@ -18,9 +18,8 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import HealthCheckView
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('user/', include('registration_management.urls')),
+    path('v1/registrationadmin/', admin.site.urls),
+    path('v1/registrationapi/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('v1/registration/', include('registration_management.urls')),
     path('v1/registration/healthcheck',HealthCheckView.as_view(),name='health check')
 ]

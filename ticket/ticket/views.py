@@ -4,4 +4,4 @@ from rest_framework import status
 
 class HealthCheckView(APIView):
     def get(self, request):
-        return Response({'message':'Registration Server Running'}, status=status.HTTP_200_OK)
+        return Response({'message':'Ticket Server Running'}, status=status.HTTP_200_OK)

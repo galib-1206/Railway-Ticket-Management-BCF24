@@ -31,7 +31,8 @@ SECRET_KEY = 'django-insecure-soy$82#x4-qmqqhy5^s$+c^$=j*^==*hwx%q0q3$k2w8k)-gz&
 DEBUG = True
 
 ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
-
+from tracer import init_tracer
+init_tracer('payment')
 
 # Application definition
 

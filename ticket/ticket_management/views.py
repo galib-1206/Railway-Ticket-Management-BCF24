@@ -39,7 +39,8 @@ class AvailableSeatsView(APIView):
             {
                 'train_id': train_id,
                 'ticket_class_id': ticket_class_id,
-                'available_seats': ticket_class.available_seats
+                'available_seats': ticket_class.available_seats,
+                'price':ticket_class.price
             },
             status=status.HTTP_200_OK
         )

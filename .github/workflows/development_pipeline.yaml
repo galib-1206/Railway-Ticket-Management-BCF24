@@ -203,6 +203,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           SERVICE_NAME: registration-service
+          DEPLOYMENT_NAME: registration-deployment
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -227,6 +228,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           SERVICE_NAME: ticket-service
+          DEPLOYMENT_NAME: ticket-deployment
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -251,6 +253,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           SERVICE_NAME: order-service
+          DEPLOYMENT_NAME: order-deployment
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -275,6 +278,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           SERVICE_NAME: payment-service
+          DEPLOYMENT_NAME: payment-deployment
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

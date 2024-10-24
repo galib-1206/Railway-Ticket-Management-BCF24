@@ -3,10 +3,13 @@ description: "Deploy to K8S"
 
 inputs:
   SERVICE_NAME:
-    description: SERVICE_NAME i.e. admin-portal
+    description: SERVICE_NAME i.e. payment-deployment
+    required: true
+  DEPLOYMENT_NAME:
+    description: DEPLOYMENT_NAME i.e. payment-deployment
     required: true
   AWS_REGION:
-    description: AWS_REGION i.e. eu-west-1
+    description: AWS_REGION i.e. ap-south-1
     required: true
   AWS_ACCESS_KEY_ID:
     description: AWS_ACCESS_KEY_ID
@@ -57,3 +60,8 @@ runs:
       shell: bash
       run: |
         cat ${{inputs.K8S_MANIFEST_FILE}} | sed "s|#{VERSION}#|${{inputs.VERSION}}|g;s|#{REPOSITORY}#|${{inputs.REPOSITORY}}|g;s|#{ECR_REPOSITORY_URL}#|${{inputs.ECR_REPOSITORY_URL}}|g" | kubectl -n ${{inputs.K8S_NAMESPACE}} apply -f -
+
+    - name: Wait for rollout to finish
+      shell: bash
+      run: |
+        kubectl -n ${{ inputs.K8S_NAMESPACE }} rollout restart deployment ${{ inputs.DEPLOYMENT_NAME }} -n ${{inputs.K8S_NAMESPACE}}

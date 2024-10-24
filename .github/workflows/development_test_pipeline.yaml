@@ -45,11 +45,17 @@ jobs:
         pylint $(find . -name "*.py") --fail-under 8 --fail-on E | tail -n 2 | awk 'NF' >> report.txt || true
         echo "" >> report.txt || true
 
-    - name: Check code quality with sonarqube
-    - uses: actions/checkout@v2
+    - name: Check out SonarQube code
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - uses: sonarsource/sonarqube-scan-action@master
+
+    - name: Run SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      with:
+        args: >
+          -Dsonar.organization=my-org
+          -Dsonar.projectKey=YOUR_PROJECT_KEY_HERE
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

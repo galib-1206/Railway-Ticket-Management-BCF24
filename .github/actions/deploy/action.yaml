@@ -64,4 +64,4 @@ runs:
     - name: Wait for rollout to finish
       shell: bash
       run: |
-        kubectl -n ${{ inputs.K8S_NAMESPACE }} rollout restart deployment ${{ inputs.DEPLOYMENT_NAME }} -n ${{inputs.K8S_NAMESPACE}}
+        kubectl -n ${{ inputs.K8S_NAMESPACE }} rollout restart deployment ${{ inputs.DEPLOYMENT_NAME }}

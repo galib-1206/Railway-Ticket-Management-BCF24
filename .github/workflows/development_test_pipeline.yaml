@@ -1,34 +1,33 @@
 name: Check Code Quality and Security Vulnerability
-
+ 
 on:
   pull_request:
     branches:
+
       - main
 
 env:
   VERSION: ${{github.ref_name}}
-
+ 
 jobs:
   check_security_vulnerability_and_code_quality:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         python-version: ["3.12"]
-
+ 
     steps:
-
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-
+ 
     - name: Install Requirements
       run: |
         pip install bandit pylint
-
+ 
     - name: Check Security with Bandit
       run: |
         echo -e "-------------\n" >> report.txt || true
@@ -36,7 +35,7 @@ jobs:
         echo -e "-------------\n" >> report.txt || true
         bandit -r . -ll --confidence-level high | sed -n '/Code scanned:/,$p' >> report.txt || true
         echo "" >> report.txt || true
-
+ 
     - name: Check Quality with Pylint
       run: |
         echo -e "-------------\n" >> report.txt || true
@@ -44,12 +43,13 @@ jobs:
         echo -e "-------------\n" >> report.txt || true
         pylint $(find . -name "*.py") --fail-under 8 --fail-on E | tail -n 2 | awk 'NF' >> report.txt || true
         echo "" >> report.txt || true
-
+ 
     - name: Comment pylint report on PR
       if: ${{ github.event_name == 'pull_request' }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         path: report.txt
+ 
 
     - name: Check out SonarQube code
       uses: actions/checkout@v2

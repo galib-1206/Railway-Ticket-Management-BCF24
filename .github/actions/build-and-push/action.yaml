@@ -47,7 +47,7 @@ runs:
       - name: Build and push Docker images to ECR
         uses: docker/build-push-action@v6.7.0
         with:
-          context: .
+          context: ${{ inputs.DIRECTORY }}
           file: ${{ inputs.DIRECTORY }}/Dockerfile
           build-args: ${{ inputs.BUILD-ARGS }}
           push: true

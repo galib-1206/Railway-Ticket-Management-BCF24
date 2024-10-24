@@ -29,7 +29,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           DIRECTORY: registration
           REPOSITORY: bcf24/registration
 
@@ -47,7 +47,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           DIRECTORY: ticket
           REPOSITORY: bcf24/ticket
   
@@ -65,7 +65,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           DIRECTORY: order
           REPOSITORY: bcf24/order
 
@@ -83,7 +83,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           DIRECTORY: payment
           REPOSITORY: bcf24/payment
 
@@ -106,7 +106,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_DIRECTORY: development
@@ -132,7 +132,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_DIRECTORY: development
@@ -157,7 +157,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_DIRECTORY: development
@@ -182,7 +182,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_DIRECTORY: development
@@ -208,7 +208,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
           REPOSITORY: bcf24/registration
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_FILE: deployment/k8s/menifests/registration-service.yaml
@@ -232,7 +232,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
           REPOSITORY: bcf24/ticket
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_FILE: deployment/k8s/menifests/ticket-service.yaml
@@ -256,7 +256,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
           REPOSITORY: bcf24/order
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_FILE: deployment/k8s/menifests/order-service.yaml
@@ -280,7 +280,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
           REPOSITORY: bcf24/payment
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ secrets.VERSION }}
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
           K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
           K8S_MANIFEST_FILE: deployment/k8s/menifests/payment-service.yaml

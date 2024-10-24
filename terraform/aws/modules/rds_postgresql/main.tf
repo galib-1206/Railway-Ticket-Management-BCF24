@@ -92,7 +92,8 @@ resource "aws_db_instance" "postgres_single_instance" {
   allocated_storage     = var.allocated_storage
   max_allocated_storage = var.max_allocated_storage
 
-  final_snapshot_identifier = random_string.my_random_string.result
+  final_snapshot_identifier = "snapshot-${random_string.my_random_string.result}"
+
 
   tags = merge(
     var.AWS_DEFAULT_TAGS,

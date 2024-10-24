@@ -82,8 +82,8 @@ runs:
     - name: Create APPLICATION Secret in k8s
       shell: bash
       run: |
-        kubectl -n ${{inputs.K8S_NAMESPACE}} create secret generic ${{inputs.SERVICE_NAME}}-app-settings --from-env-file=./tmp/${{inputs.SERVICE_NAME}}.env
         sed -i 's/,/\n/g' ./tmp/${{inputs.SERVICE_NAME}}.env
+        kubectl -n ${{inputs.K8S_NAMESPACE}} create secret generic ${{inputs.SERVICE_NAME}}-app-settings --from-env-file=./tmp/${{inputs.SERVICE_NAME}}.env
 
     - name: Print the formatted Application Settings
       shell: bash

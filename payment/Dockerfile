@@ -4,7 +4,7 @@ LABEL maintainer="Projects BD"
 
 WORKDIR /app/payment
 
-COPY ./requirements.txt .
+COPY ./payment/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir --upgrade setuptools \

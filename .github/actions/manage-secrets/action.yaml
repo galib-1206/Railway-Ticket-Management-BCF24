@@ -88,7 +88,6 @@ runs:
     - name: Print the formatted Application Settings
       shell: bash
       run: |
-      #dsnfks
         cat ./tmp/${{inputs.SERVICE_NAME}}.env
 
     - name: Create DB Secret in k8s

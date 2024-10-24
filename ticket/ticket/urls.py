@@ -19,7 +19,7 @@ from django.urls import path, include
 from .views import HealthCheckView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('healthcheck/', HealthCheckView.as_view(),name='health check'),
-    path('ticket/',include('ticket_management.urls'))
+    path('v1/ticket/admin/', admin.site.urls),
+    path('v1/ticket/healthcheck/', HealthCheckView.as_view(),name='health check'),
+    path('v1/ticket/',include('ticket_management.urls'))
 ]

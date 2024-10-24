@@ -1,13 +1,11 @@
-# accounts/views.py
+from django.conf import settings
+from .models import PendingRegistration
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from .models import Profile
 from .serializers import UserRegistrationSerializer, OTPVerificationSerializer, PasswordSetupSerializer
-import random
-
+from django.contrib.auth.models import User
+from rest_framework import status
+from django.core.mail import send_mail
 class UserRegistrationView(APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -15,41 +13,28 @@ class UserRegistrationView(APIView):
             username = serializer.validated_data['username']
             email = serializer.validated_data['email']
 
-            # Check if a user with this email already exists
+            # Check if a PendingRegistration or User with this email already exists
             if User.objects.filter(email=email).exists():
                 return Response({'detail': 'A user with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Create the user without setting a password
-            user = User.objects.create(username=username, email=email)
-            otp = random.randint(100000, 999999)  # Generate a 6-digit OTP
+            # Create a PendingRegistration entry
+            pending_user = PendingRegistration.objects.create(username=username, email=email)
+            pending_user.generate_otp()
 
             # Send OTP to email
             send_mail(
-                'Your OTP Code',
-                f'Your OTP is {otp}',
-                'admin@myapp.com',
+                'OTP Code',
+                f'Your OTP for Ticket Management System is {pending_user.otp}',
+                settings.EMAIL_HOST_USER,
                 [email],
                 fail_silently=False,
             )
 
-            # Save OTP to user profile
-            profile = user.profile
-            profile.otp = otp
-            profile.otp_verified = False
-            profile.save()
-
-            return Response({'detail': 'User registered successfully. OTP sent to email.'}, status=status.HTTP_201_CREATED)
+            return Response({'detail': 'User registration initiated. OTP sent to email.'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# accounts/views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from .models import Profile
-from .serializers import UserRegistrationSerializer, OTPVerificationSerializer, PasswordSetupSerializer
-import random
+
+
 
 class OTPVerificationView(APIView):
     def post(self, request):
@@ -59,27 +44,22 @@ class OTPVerificationView(APIView):
             otp = serializer.validated_data['otp']
 
             try:
-                user = User.objects.get(email=email)
-                if user.profile.otp == otp:
-                    user.profile.otp_verified = True
-                    user.profile.generate_reset_token()  # Generate a reset token
-                    user.profile.save()
+                pending_user = PendingRegistration.objects.get(email=email)
+                if pending_user.otp == otp:
+                    if pending_user.is_otp_valid():
+                        pending_user.otp_verified = True
+                        pending_user.generate_reset_token()  # Generate a reset token
+                        pending_user.save()
 
-                    # Send token via email
-                    send_mail(
-                        'Your Password Reset Token',
-                        f'Your reset token is {user.profile.reset_token}',
-                        'admin@myapp.com',
-                        [email],
-                        fail_silently=False,
-                    )
-
-                    return Response({'detail': 'OTP verified successfully. Reset token sent to email.'}, status=status.HTTP_200_OK)
+                        return Response({'detail': 'OTP verified successfully.','reset_token':pending_user.reset_token}, status=status.HTTP_200_OK)
+                    else:
+                        pending_user.delete()
+                        return Response({'detail': 'OTP expired.'}, status=status.HTTP_400_BAD_REQUEST)
+                pending_user.delete()
                 return Response({'detail': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
-            except User.DoesNotExist:
+            except PendingRegistration.DoesNotExist:
                 return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # accounts/views.py (only modified section)
 class PasswordSetupView(APIView):
@@ -96,15 +76,15 @@ class PasswordSetupView(APIView):
                 return Response({'detail': 'Reset token missing in headers.'}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                user = User.objects.get(email=email)
-                if user.profile.is_reset_token_valid(reset_token):
-                    user.set_password(password)
-                    user.profile.reset_token = None  # Invalidate the token after use
-                    user.profile.reset_token_expiration = None
+                pending_user = PendingRegistration.objects.get(email=email)
+                if pending_user.is_reset_token_valid(reset_token):
+                    user = User.objects.create_user(username=pending_user.username, email=email, password=password)
+                    pending_user.delete()
                     user.save()
-                    user.profile.save()
                     return Response({'detail': 'Password set successfully.'}, status=status.HTTP_200_OK)
                 return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
             except User.DoesNotExist:
                 return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+

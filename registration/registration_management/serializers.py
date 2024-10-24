@@ -1,10 +1,11 @@
 # accounts/serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import PendingRegistration
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = PendingRegistration
         fields = ['username', 'email']
 
 class OTPVerificationSerializer(serializers.Serializer):

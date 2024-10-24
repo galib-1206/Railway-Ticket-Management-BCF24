@@ -3,64 +3,64 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: bcf24-tm-ns
-  name: payment-deployment
+  name: ticket-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: payment
+      app: ticket
   template:
     metadata:
       labels:
-        app: payment
+        app: ticket
     spec:
       containers:
-        - name: payment
-          image: 863518452741.dkr.ecr.ap-south-1.amazonaws.com/bcf24/payment:latest
+        - name: ticket
+          image: 863518452741.dkr.ecr.ap-south-1.amazonaws.com/bcf24/ticket:latest
           ports:
-            - containerPort: 8004
+            - containerPort: 8002
           envFrom:
             - secretRef:
-                name: payment-service-app-settings
+                name: ticket-service-app-settings
           env:
             - name: DATABASES
               valueFrom:
                 secretKeyRef:
-                  name: payment-service-db-settings
-                  key: payment-service.json
+                  name: ticket-service-db-settings
+                  key: ticket-service.json
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "5m"
-            limits:
               memory: "256Mi"
-              cpu: "250m"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: bcf24-tm-ns
-  name: payment-service
+  name: ticket-service
 spec:
   type: ClusterIP
   ports:
     - port: 80
-      targetPort: 8004
+      targetPort: 8002
       protocol: TCP
   selector:
-    app: payment
+    app: ticket
 ---
 apiVersion: autoscaling/v1  
 kind: HorizontalPodAutoscaler
 metadata:
   namespace: bcf24-tm-ns
-  name: payment-hpa
+  name: ticket-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: payment-deployment
+    name: ticket-deployment
   minReplicas: 1
-  maxReplicas: 1
-  targetCPUUtilizationPercentage: 70     
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 85   

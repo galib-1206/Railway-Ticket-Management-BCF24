@@ -30,11 +30,11 @@ spec:
                   key: registration-service.json
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "5m"
-            limits:
               memory: "256Mi"
-              cpu: "250m"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           imagePullPolicy: Always
 ---
 apiVersion: v1
@@ -62,5 +62,5 @@ spec:
     kind: Deployment
     name: registration-deployment
   minReplicas: 1
-  maxReplicas: 1
-  targetCPUUtilizationPercentage: 70     
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 85  

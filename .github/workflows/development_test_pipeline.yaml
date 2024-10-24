@@ -1,0 +1,64 @@
+name: Check Code Quality and Security Vulnerability
+
+on:
+  pull_request:
+    branches:
+      - prod
+
+env:
+  VERSION: ${{github.ref_name}}
+
+jobs:
+  check_security_vulnerability_and_code_quality:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Requirements
+      run: |
+        pip install bandit pylint
+
+    - name: Check Security with Bandit
+      run: |
+        echo -e "-------------\n" >> report.txt || true
+        echo -e "#### Bandit: Run#${{ github.run_number }} \n" >> report.txt || true
+        echo -e "-------------\n" >> report.txt || true
+        bandit -r . -ll --confidence-level high | sed -n '/Code scanned:/,$p' >> report.txt || true
+        echo "" >> report.txt || true
+
+    - name: Check Quality with Pylint
+      run: |
+        echo -e "-------------\n" >> report.txt || true
+        echo "#### Pylint: Run#${{ github.run_number }}" >> report.txt || true
+        echo -e "-------------\n" >> report.txt || true
+        pylint $(find . -name "*.py") --fail-under 8 --fail-on E | tail -n 2 | awk 'NF' >> report.txt || true
+        echo "" >> report.txt || true
+
+    - name: Run SonarQube Scan
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # GitHub secret for SonarQube authentication
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  # GitHub secret for SonarQube host URL
+      run: |
+        echo "Running SonarQube Scan"
+        sonar-scanner \
+          -Dsonar.projectKey=your_project_key \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=$SONAR_HOST_URL \
+          -Dsonar.login=$SONAR_TOKEN
+
+    - name: Comment pylint report on PR
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        path: report.txt

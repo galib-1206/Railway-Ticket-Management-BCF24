@@ -1,0 +1,198 @@
+name: Deploy to Development
+
+on:
+  push:
+    branches:
+    - prod
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERSION: ${{ github.sha }}_DEVELOPMENT
+  env_var: ${{ vars.ENV_CONTEXT_VAR }}
+
+jobs:
+  
+  build-registration-service:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Build image for registration service
+        uses: ./.github/actions/build-and-push
+        with:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          VERSION: ${{ env.VERSION }}
+          DIRECTORY: registration
+          REPOSITORY: bcf24/registration
+
+  build-ticket-service:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Build image for ticket-service
+        uses: ./.github/actions/build-and-push
+        with:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          VERSION: ${{ env.VERSION }}
+          DIRECTORY: ticket_service
+          REPOSITORY: bcf24/ticket
+
+  build-payment-service:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Build image for payment-service
+        uses: ./.github/actions/build-and-push
+        with:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          VERSION: ${{ env.VERSION }}
+          DIRECTORY: ticket_service
+          REPOSITORY: bcf24/payment
+
+
+  Secrets_for_registration-service:
+    runs-on: ubuntu-latest
+    environment: development
+    needs:
+    - build-registration-service
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Deploy Secrets to Development Environment of bcf24-tm in k8s for registration service
+        uses: ./.github/actions/manage-secrets
+        with:
+          SERVICE_NAME: registraion-service
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          VERSION: ${{ env.VERSION }}
+          K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+          K8S_MANIFEST_DIRECTORY: development
+          PARAMETER_STORE_APPLICATION_SETTINGS: /bcf24-tm/registration-service/registration-service-settings
+          PARAMETER_STORE_DB_SETTINGS: /bcf24-tm/registration-service/database-settings
+
+
+  Secrets_for_ticket-service:
+    runs-on: ubuntu-latest
+    environment: development
+    needs:
+    - build-ticket-service
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Deploy Secrets to Development Environment of bcf24-tm in k8s for ticket-service
+        uses: ./.github/actions/manage-secrets
+        with:
+          SERVICE_NAME: ticket-service
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          VERSION: ${{ env.VERSION }}
+          K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+          K8S_MANIFEST_DIRECTORY: development
+          PARAMETER_STORE_APPLICATION_SETTINGS: /bcf24-tm/ticket_service/ticket-service-settings
+          PARAMETER_STORE_DB_SETTINGS: /bcf24-tm/ticket_service/database-settings
+
+  Secrets_for_payment-service:
+    runs-on: ubuntu-latest
+    environment: development
+    needs:
+    - build-payment-service
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Deploy Secrets to Development Environment of bcf24-tm in k8s for payment-service
+        uses: ./.github/actions/manage-secrets
+        with:
+          SERVICE_NAME: ticket-service
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          VERSION: ${{ env.VERSION }}
+          K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+          K8S_MANIFEST_DIRECTORY: development
+          PARAMETER_STORE_APPLICATION_SETTINGS: /bcf24-tm/payment_service/payment-service-settings
+          PARAMETER_STORE_DB_SETTINGS: /bcf24-tm/payment_service/database-settings
+
+
+
+  Deployment_of_registration-service:
+    runs-on: ubuntu-latest
+    environment: development
+    needs:
+    - Secrets_for_registration-service
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Deploy IMAGE to Development Environment of bcf24-tm in k8s for registration-service
+        uses: ./.github/actions/deploy
+        with:
+          SERVICE_NAME: admin-portal
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          REPOSITORY: bcf24/registration
+          VERSION: ${{ env.VERSION }}
+          K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+          K8S_MANIFEST_FILE: deployment/k8s/menifests/registration-service.yaml
+
+  Deployment_of_payment-service:
+    runs-on: ubuntu-latest
+    environment: development
+    needs:
+    - Secrets_for_payment-service
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.7
+
+      - name: Deploy IMAGE to Development Environment of bcf24-tm in k8s for payment-service
+        uses: ./.github/actions/deploy
+        with:
+          SERVICE_NAME: ticket-service
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REPOSITORY_URL: ${{ secrets.ECR_REPOSITORY_URL }}
+          REPOSITORY: bcf24/payment
+          VERSION: ${{ env.VERSION }}
+          K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+          K8S_MANIFEST_FILE: deployment/k8s/menifests/payment_service.yaml
+

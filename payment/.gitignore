@@ -1,0 +1,6 @@
+.env
+env
+payment_management/__pycache__
+payment_management/migrations
+payment/__pycache__
+*.pyc

@@ -1,0 +1,6 @@
+.env
+env
+ticket_management/__pycache__
+ticket_management/migrations
+ticket/__pycache__
+*.pyc

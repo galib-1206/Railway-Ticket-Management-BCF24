@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import json
 from pathlib import Path
 from decouple import config
 
@@ -98,16 +98,7 @@ SIMPLE_JWT = {
 
 # settings.py
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'registration_db',      # Name of your database
-        'USER': 'postgres',          # Your database user
-        'PASSWORD': config('DATABASE_PASSWORD'),  # Your user password
-        'HOST': 'localhost',       # Set to empty string for localhost
-        'PORT': '5432',                # Set to empty string for default
-    }
-}
+DATABASES = json.loads(config('DATABASES'))
 
 
 

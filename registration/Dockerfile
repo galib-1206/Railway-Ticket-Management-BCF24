@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt \
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8001", "registration.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8001", "registration.registration.wsgi:application"]

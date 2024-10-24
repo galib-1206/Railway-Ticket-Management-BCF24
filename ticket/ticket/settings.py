@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'ticket.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = json.loads(config('DATABASES'))
+DATABASES = json.loads(os.getenv('DATABASES'))
 
 
 # Password validation

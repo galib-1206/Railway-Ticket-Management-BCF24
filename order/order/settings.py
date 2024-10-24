@@ -25,7 +25,7 @@ init_tracer('order')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a-el=!&6st-zlmje%m7&(k@-$4e^9chez$kq4^8$v+0j^e#wya'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

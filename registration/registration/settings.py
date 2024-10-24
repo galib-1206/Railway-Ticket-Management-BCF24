@@ -31,6 +31,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition

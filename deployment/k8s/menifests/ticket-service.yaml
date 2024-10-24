@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: bcf24-tm-ns
+  name: ticket-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticket
+  template:
+    metadata:
+      labels:
+        app: ticket
+    spec:
+      containers:
+        - name: ticket
+          image: 863518452741.dkr.ecr.ap-south-1.amazonaws.com/bcf24/ticket:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: ticket-service-app-settings
+          env:
+            - name: DATABASES
+              valueFrom:
+                secretKeyRef:
+                  name: ticket-service-db-settings
+                  key: ticket-service.json
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "5m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: bcf24-tm-ns
+  name: ticket-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: ticket

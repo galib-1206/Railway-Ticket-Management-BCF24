@@ -3,10 +3,10 @@ description: "Secrets and Configuration Management"
 
 inputs:
   SERVICE_NAME:
-    description: SERVICE_NAME i.e. admin-portal
+    description: SERVICE_NAME
     required: true
   AWS_REGION:
-    description: AWS_REGION i.e. eu-west-1
+    description: AWS_REGION
     required: true
   AWS_ACCESS_KEY_ID:
     description: AWS_ACCESS_KEY_ID
@@ -37,10 +37,10 @@ inputs:
     required: true
 
   PARAMETER_STORE_APPLICATION_SETTINGS:
-    description: i.e. /waadaa/dev/admin_portal/admin-portal-settings
+    description: i.e. /bcf24-tm/payment_service/payment-service-settings
     required: true
   PARAMETER_STORE_DB_SETTINGS:
-    description: i.e. /waadaa/dev/admin_portal/database-settings
+    description: i.e. /bcf24-tm/payment_service/database-settings
     required: true
 
 

@@ -54,8 +54,8 @@ jobs:
       uses: sonarsource/sonarqube-scan-action@master
       with:
         args: >
-          -Dsonar.organization=my-org
-          -Dsonar.projectKey=YOUR_PROJECT_KEY_HERE
+          -Dsonar.organization=BCF24-ops-optimizers
+          -Dsonar.projectKey=AhnafMubashshir_BCF24-ops-optimizers_d2f9b71c-c8a2-41f9-800f-6b660ff6ca76
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

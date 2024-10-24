@@ -13,6 +13,8 @@ import json
 from pathlib import Path
 from decouple import config
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,7 +100,6 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # settings.py
-
 DATABASES = json.loads(os.getenv('DATABASES'))
 
 
@@ -136,6 +137,7 @@ import os
 # Ensure that OpenTelemetry is set up when Django starts
 if (config("TRACER") == "true"):
     import tracer
+    tracer.init_tracer('registration')
 
 
 # Internationalization

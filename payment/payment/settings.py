@@ -14,6 +14,8 @@ from pathlib import Path
 from decouple import config
 import json
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,6 +78,7 @@ WSGI_APPLICATION = 'payment.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DATABASES = json.loads(os.getenv('DATABASES'))
 DATABASES = json.loads(os.getenv('DATABASES'))
 
 

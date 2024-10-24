@@ -3,7 +3,7 @@ name: Check Code Quality and Security Vulnerability
 on:
   pull_request:
     branches:
-      - prod
+      - main
 
 env:
   VERSION: ${{github.ref_name}}

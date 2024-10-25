@@ -77,8 +77,10 @@ class GiveOrderView(APIView):
 
             # Check if the seats are still locked for this user
             lock_key = f"lock:{train_id}:{ticket_class}:{user_id}"
-            if cache.exists(lock_key):
-                #cache.expire(lock_key, 300)
+            if cache.has_key(lock_key):
+                current_value=cache.get(lock_key)
+                if current_value is not None:
+                    cache.set(lock_key,current_value,300)
                 order = Order.objects.create(
                     user_id=user_id,
                     train_id=train_id,

@@ -1,0 +1,56 @@
+name: "Build & Publish to ECR"
+description: "Build & Publish to ECR"
+
+inputs:
+  AWS_REGION:
+    description: AWS_REGION i.e. eu-west-1
+    required: true
+  AWS_ACCESS_KEY_ID:
+    description: AWS_ACCESS_KEY_ID
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: AWS_SECRET_ACCESS_KEY
+    required: true
+  ECR_REPOSITORY_URL:
+    description: ECR_REPOSITORY URL
+    required: true
+  VERSION:
+    description: Image tag/version
+    required: true
+  DIRECTORY:
+    description: "Service directory to be built"
+    required: true
+  BUILD-ARGS:
+    description: "Docker build args"
+    required: false
+  REPOSITORY:
+    description: "Remote repository name"
+    required: true
+
+runs:
+   using: "composite"
+   steps:
+      - name: Docker Setup Buildx
+        uses: docker/setup-buildx-action@v3.6.1
+
+      - name: Set AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: ${{ inputs.AWS_REGION }}
+          aws-access-key-id: ${{ inputs.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+
+      - name: Build and push Docker images to ECR
+        uses: docker/build-push-action@v6.7.0
+        with:
+          context: ${{ inputs.DIRECTORY }}
+          file: ${{ inputs.DIRECTORY }}/Dockerfile
+          build-args: ${{ inputs.BUILD-ARGS }}
+          push: true
+          tags: ${{ inputs.ECR_REPOSITORY_URL }}/${{ inputs.REPOSITORY }}:${{ inputs.VERSION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

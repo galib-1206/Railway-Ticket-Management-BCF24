@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: bcf24-tm-ns
+  name: payment-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: 863518452741.dkr.ecr.ap-south-1.amazonaws.com/bcf24/payment:latest
+          ports:
+            - containerPort: 8004
+          envFrom:
+            - secretRef:
+                name: payment-service-app-settings
+          env:
+            - name: DATABASES
+              valueFrom:
+                secretKeyRef:
+                  name: payment-service-db-settings
+                  key: payment-service.json
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: bcf24-tm-ns
+  name: payment-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8004
+      protocol: TCP
+  selector:
+    app: payment
+---
+apiVersion: autoscaling/v1  
+kind: HorizontalPodAutoscaler
+metadata:
+  namespace: bcf24-tm-ns
+  name: payment-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: payment-deployment
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 85  

@@ -1,0 +1,6 @@
+.env
+env
+registration_management/__pycache__
+registration_management/migrations
+registration/__pycache__
+*.pyc

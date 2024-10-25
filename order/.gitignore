@@ -1,0 +1,6 @@
+.env
+env
+order_management/__pycache__
+order_management/migrations
+order/__pycache__
+*.pyc

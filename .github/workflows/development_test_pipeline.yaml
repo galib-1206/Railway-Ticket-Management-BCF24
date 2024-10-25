@@ -1,0 +1,70 @@
+name: Check Code Quality and Security Vulnerability
+ 
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  VERSION: ${{github.ref_name}}
+ 
+jobs:
+  check_security_vulnerability_and_code_quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+ 
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+ 
+    - name: Install Requirements
+      run: |
+        pip install bandit pylint
+ 
+    - name: Check Security with Bandit
+      run: |
+        echo -e "-------------\n" >> report.txt || true
+        echo -e "#### Bandit: Run#${{ github.run_number }} \n" >> report.txt || true
+        echo -e "-------------\n" >> report.txt || true
+        bandit -r . -ll --confidence-level high | sed -n '/Code scanned:/,$p' >> report.txt || true
+        echo "" >> report.txt || true
+ 
+    - name: Check Quality with Pylint
+      run: |
+        echo -e "-------------\n" >> report.txt || true
+        echo "#### Pylint: Run#${{ github.run_number }}" >> report.txt || true
+        echo -e "-------------\n" >> report.txt || true
+        pylint $(find . -name "*.py") --fail-under 8 --fail-on E | tail -n 2 | awk 'NF' >> report.txt || true
+        echo "" >> report.txt || true
+ 
+    - name: Comment pylint report on PR
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        path: report.txt
+ 
+
+    - name: Check out SonarQube code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Run SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      with:
+        args: >
+          -Dsonar.organization=BCF24-ops-optimizers
+          -Dsonar.projectKey=AhnafMubashshir_BCF24-ops-optimizers_d2f9b71c-c8a2-41f9-800f-6b660ff6ca76
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

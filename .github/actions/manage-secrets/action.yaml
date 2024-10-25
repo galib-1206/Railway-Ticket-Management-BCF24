@@ -1,0 +1,96 @@
+name: "Secrets and Configuration Management"
+description: "Secrets and Configuration Management"
+
+inputs:
+  SERVICE_NAME:
+    description: SERVICE_NAME
+    required: true
+  AWS_REGION:
+    description: AWS_REGION
+    required: true
+  AWS_ACCESS_KEY_ID:
+    description: AWS_ACCESS_KEY_ID
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: AWS_SECRET_ACCESS_KEY
+    required: true
+
+  ECR_REPOSITORY_URL:
+    description: ECR_REPOSITORY URL
+    required: true
+  VERSION:
+    description: Image tag/version
+    required: true
+  REPOSITORY:
+    description: "Remote repository name"
+    required: true
+
+
+  K8S_CLUSTER_NAME:
+    description: Cluster to be deployed to
+    required: true
+  K8S_NAMESPACE:
+    description: Namespace to be deployed
+    required: true
+  K8S_MANIFEST_DIRECTORY:
+    description: K8S_MANIFEST_DIRECTORY to use
+    required: true
+
+  PARAMETER_STORE_APPLICATION_SETTINGS:
+    description: i.e. /bcf24-tm/payment_service/payment-service-settings
+    required: true
+  PARAMETER_STORE_DB_SETTINGS:
+    description: i.e. /bcf24-tm/payment_service/database-settings
+    required: true
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Prepare Pipeline Temporary Directory
+      shell: bash
+      run: |
+        mkdir tmp
+
+    - name: Set AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4.0.2
+      with:
+        aws-access-key-id: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ inputs.AWS_REGION }}
+
+    - name: Get Applications Settings in tmp directory
+      shell: bash
+      run: |
+        aws ssm get-parameter --name ${{inputs.PARAMETER_STORE_APPLICATION_SETTINGS}} --with-decryption --output text --query "Parameter.Value" --region  ${{ inputs.AWS_REGION }} > ./tmp/${{inputs.SERVICE_NAME}}.env
+
+    - name: Get DB Settings in tmp directory
+      shell: bash
+      run: |
+        aws ssm get-parameter --name ${{inputs.PARAMETER_STORE_DB_SETTINGS}} --with-decryption --output text --query "Parameter.Value" --region  ${{ inputs.AWS_REGION }} > ./tmp/${{inputs.SERVICE_NAME}}.json
+
+    - name: Create EKS Credential
+      shell: bash
+      run: |
+        aws eks --region  ${{ inputs.AWS_REGION }} update-kubeconfig --name ${{inputs.K8S_CLUSTER_NAME}}
+
+    - name: Remove Old Secret
+      shell: bash
+      run: |
+        kubectl -n ${{inputs.K8S_NAMESPACE}} delete secret ${{inputs.SERVICE_NAME}}-db-settings ${{inputs.SERVICE_NAME}}-app-settings --ignore-not-found
+        
+    - name: Create APPLICATION Secret in k8s
+      shell: bash
+      run: |
+        sed -i 's/,/\n/g' ./tmp/${{inputs.SERVICE_NAME}}.env
+        kubectl -n ${{inputs.K8S_NAMESPACE}} create secret generic ${{inputs.SERVICE_NAME}}-app-settings --from-env-file=./tmp/${{inputs.SERVICE_NAME}}.env
+
+    # - name: Print the formatted Application Settings
+    #   shell: bash
+    #   run: |
+    #     cat ./tmp/${{inputs.SERVICE_NAME}}.env
+
+    - name: Create DB Secret in k8s
+      shell: bash
+      run: |
+        kubectl -n ${{inputs.K8S_NAMESPACE}} create secret generic ${{inputs.SERVICE_NAME}}-db-settings --from-file=./tmp/${{inputs.SERVICE_NAME}}.json

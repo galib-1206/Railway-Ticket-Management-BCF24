@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: bcf24-tm-ns
+  name: order-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: 863518452741.dkr.ecr.ap-south-1.amazonaws.com/bcf24/order:latest
+          ports:
+            - containerPort: 8003
+          envFrom:
+            - secretRef:
+                name: order-service-app-settings
+          env:
+            - name: DATABASES
+              valueFrom:
+                secretKeyRef:
+                  name: order-service-db-settings
+                  key: order-service.json
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: bcf24-tm-ns
+  name: order-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8003
+      protocol: TCP
+  selector:
+    app: order
+---
+apiVersion: autoscaling/v1  
+kind: HorizontalPodAutoscaler
+metadata:
+  namespace: bcf24-tm-ns
+  name: order-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: order-deployment
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 85 

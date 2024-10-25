@@ -34,7 +34,7 @@ CORS_ALLOWED_ORIGINS = [
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [

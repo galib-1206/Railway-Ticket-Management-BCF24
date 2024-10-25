@@ -1,6 +1,6 @@
 import requests
-from .redis_utils import redis_client
 from decouple import config
+from django.core.cache import cache
 def unlock_db_seats(lock_key):
     # Assuming that keys are stored as "lock:{train_id}:{ticket_class}:{user_id}"
     key_parts = lock_key.split(":")
@@ -8,7 +8,7 @@ def unlock_db_seats(lock_key):
         train_id, ticket_class = key_parts[1], key_parts[2]
         
         # Fetch the value of the lock key (number of seats)
-        number_of_seats = redis_client.get(lock_key)
+        number_of_seats = cache.get(lock_key)
         number_of_seats = int(number_of_seats) if number_of_seats else 0  # Convert to int, default to 0 if None
         
         # Assuming the train server has an API to release tickets from the NDB.

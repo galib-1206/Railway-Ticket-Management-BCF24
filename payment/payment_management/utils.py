@@ -1,5 +1,4 @@
 import requests
-from .redis_utils import redis_client
 from decouple import config
 from django.core.cache import cache
 def unlock_db_seats(lock_key):

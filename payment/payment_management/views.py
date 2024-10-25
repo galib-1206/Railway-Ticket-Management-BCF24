@@ -10,7 +10,7 @@ from decouple import config
 from django.conf import settings
 from .models import Payment
 from .serializers import PaymentSerializer
-from .redis_utils import redis_client, unlock_seats  # Assuming you have a redis client setup
+from .redis_utils import unlock_seats  # Assuming you have a redis client setup
 from .utils import unlock_db_seats
 from django.core.cache import cache
 class ProcessPaymentView(APIView):

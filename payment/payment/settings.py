@@ -51,8 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'payment_management'
 ]
-REDIS_HOST = config('REDIS_HOST')
-REDIS_PORT = 6379
+
 
 CACHES = {
     'default': {

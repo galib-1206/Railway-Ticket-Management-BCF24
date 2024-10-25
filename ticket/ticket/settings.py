@@ -36,9 +36,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
 
-REDIS_HOST = config('REDIS_HOST')
-REDIS_PORT = 6379
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -64,8 +61,8 @@ MIDDLEWARE = [
 ]
 CACHES = {
     'default': {
-        'BACKEND': 'django_elasticache.memcached.ElastiCache',
-        'LOCATION': 'bcf24-redis.ztt151.ng.0001.aps1.cache.amazonaws.com:6379/0',  # Replace with your ElastiCache endpoint
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://bcf24-redis.ztt151.ng.0001.aps1.cache.amazonaws.com:6379/0',  # Replace with your ElastiCache endpoint
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }

@@ -4,7 +4,7 @@ import threading
 from django.conf import settings
 from django.core.cache import cache
 def redis_key_expiry_listener():
-    pubsub = cache.pubsub()
+    pubsub = redis_client.pubsub()
     pubsub.psubscribe('__keyevent@0__:expired')
 
     for message in pubsub.listen():

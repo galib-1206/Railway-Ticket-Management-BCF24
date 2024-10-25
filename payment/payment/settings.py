@@ -31,6 +31,11 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",  # Replace with your Angular app's URL
+    "https://your-frontend-url.com",
+]
 from tracer import init_tracer
 init_tracer('payment')
 
@@ -48,6 +53,16 @@ INSTALLED_APPS = [
 ]
 REDIS_HOST = config('REDIS_HOST')
 REDIS_PORT = 6379
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'bcf24-redis.ztt151.ng.0001.aps1.cache.amazonaws.com:6379/0',  # Replace with your ElastiCache endpoint
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Should be at the top
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'payment.urls'

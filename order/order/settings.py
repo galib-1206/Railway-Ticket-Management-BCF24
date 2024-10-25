@@ -60,7 +60,7 @@ MIDDLEWARE = [
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'bcf24-redis.ztt151.ng.0001.aps1.cache.amazonaws.com:6379/0',  # Replace with your ElastiCache endpoint
+        'LOCATION': 'redis://bcf24-redis.ztt151.ng.0001.aps1.cache.amazonaws.com:6379/0',  # Replace with your ElastiCache endpoint
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }

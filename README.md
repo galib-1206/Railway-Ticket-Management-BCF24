@@ -11,3 +11,9 @@ Solution: Milestones Strategy.
 
 ### Milestone 1 : System Design
 ![image1!](E:\Projects\Kubernetes\Railway-Ticket-Management-BCF24\project_images\System Design.jpg)
+
+### Milestone 2 : Implementation
+
+![image2!]()
+
+

@@ -30,8 +30,8 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['api.projectsbd.me','localhost']
-
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -54,10 +54,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Should be at the top
+    'django.middleware.common.CommonMiddleware',
 ]
-
-REDIS_HOST = config('REDIS_HOST')
-REDIS_PORT = 6379
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://bcf24-redis.ztt151.ng.0001.aps1.cache.amazonaws.com:6379/0',  # Replace with your ElastiCache endpoint
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 
 ROOT_URLCONF = 'order.urls'
 

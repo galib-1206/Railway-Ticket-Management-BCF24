@@ -10,9 +10,9 @@ from decouple import config
 from django.conf import settings
 from .models import Payment
 from .serializers import PaymentSerializer
-from .redis_utils import redis_client, unlock_seats  # Assuming you have a redis client setup
+from .redis_utils import unlock_seats  # Assuming you have a redis client setup
 from .utils import unlock_db_seats
-
+from django.core.cache import cache
 class ProcessPaymentView(APIView):
     def post(self, request):
         try:
@@ -56,7 +56,7 @@ class ProcessPaymentView(APIView):
 
             # Step 3: Check lock key existence in Redis
             lock_key = f"lock:{train_id}:{ticket_class}:{user_id}"
-            if redis_client.exists(lock_key):
+            if cache.has_key(lock_key):
                 payment_status = "successful"
             else:
                 unlock_db_seats(lock_key)  # Unlock seats in the DB if Redis lock expired
@@ -69,7 +69,7 @@ class ProcessPaymentView(APIView):
             try:
                 payment = Payment.objects.create(
                     order_id=order_id,
-                    payment_id=order_id + token,  # Assuming unique ID logic here, adjust as needed
+                   # Assuming unique ID logic here, adjust as needed
                     status=payment_status,
                     amount=price * number_of_seats
                 )

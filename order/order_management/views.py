@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import LockSeatsSerializer, ConfirmOrderSerializer, OrderSerializer
 from .models import Order
-from .redis_utils import lock_seats,  redis_client
+from .redis_utils import lock_seats
 import requests
 from decouple import config
 import requests
@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import LockSeatsSerializer
 from django.conf import settings  # Ensure you're using Django's settings
-
+from django.core.cache import cache
 class LockSeatsView(APIView):
     def post(self, request):
         serializer = LockSeatsSerializer(data=request.data)
@@ -77,8 +77,10 @@ class GiveOrderView(APIView):
 
             # Check if the seats are still locked for this user
             lock_key = f"lock:{train_id}:{ticket_class}:{user_id}"
-            if redis_client.exists(lock_key):
-                redis_client.expire(lock_key, 300)
+            if cache.has_key(lock_key):
+                current_value=cache.get(lock_key)
+                if current_value is not None:
+                    cache.set(lock_key,current_value,300)
                 order = Order.objects.create(
                     user_id=user_id,
                     train_id=train_id,

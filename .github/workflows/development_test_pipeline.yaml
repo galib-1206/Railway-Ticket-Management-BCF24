@@ -1,7 +1,7 @@
 name: Check Code Quality and Security Vulnerability
  
 on:
-  pull_request:
+  push:
     branches:
       - main
 

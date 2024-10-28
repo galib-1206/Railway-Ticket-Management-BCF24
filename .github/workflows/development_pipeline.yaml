@@ -3,7 +3,7 @@ name: Deploy to Development
 on:
   push:
     branches:
-    - main
+    - production
 
 concurrency:
   group: ${{ github.ref }}

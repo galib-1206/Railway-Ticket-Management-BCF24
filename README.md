@@ -98,5 +98,7 @@ EKS itself manages Zero-downtime deployments through rolling updates, health che
 - Load Balancing: Directs traffic to available, healthy Pods, preventing service interruptions.
 - HorizontalPodAutoscaler (HPA): Adjusts Pod replicas to handle traffic spikes, ensuring availability.
 
+Slide Link : https://docs.google.com/presentation/d/1cpRpeR8MmdgUJ1bpeNmD9HxZgbEtlBsq4BcrPWyjzrY/edit#slide=id.g30e783951b2_0_0
 
+### Run Production Branch!!!!!!!
 

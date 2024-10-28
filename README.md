@@ -25,32 +25,45 @@ Solution: Milestones Strategy.
 - Payment Service : Succeeds payment if lock is still available, otherwise not.
 
 *Inter Service Communication*: 
-![image2!](project_images/Microservice_communication.jpg) 
-![image1!](../kubeadm_pics/image1.png)
+
+![image2!](./project_images/Microservice_communication.jpg) 
+
 *Dockerizing Microservices in AWS*
+
+*DockerFile:* Separate Dockerfile for each microservice to define the app environment.
+
+*ECR (Elastic Container Registry):* Store Docker images in ECR.Maintain different ECR repositories for each microservice.
+
+*CI/CD Pipeline:* Automate Docker image build and push to ECR using Github Action CI/CD.
+
+*EKS Deployment:* Deploy microservices on EKS (Elastic Kubernetes Service) using the stored images.
+
+*Scaling:* Leverage Kubernetes HPA for dynamic scaling based on resource usage.
+
+
 
 *Horizontal Pod Autoscaler (HPA)*
 HPA monitors average CPU utilization of Pods and adjusts the number of replicas.
 
-*Target CPU Utilization:* Defined in the HPA (e.g., 85%); HPA maintains CPU usage close to this target.
+*Target CPU Utilization:* Defined in the HPA *(e.g., 85%)*; HPA maintains CPU usage close to this target.
 Scaling Logic:
 - Scale Up: Adds Pods if CPU exceeds the target (e.g., CPU > 85%).
 - Scale Down: Removes Pods if CPU usage drops below the target.
 
-![image3!]()
+![image3!](./project_images/HPA_Autoscaling.png)
 
 ### Milestone 3 : DevOps Pipeline
 
 *Git Branching Strategy*
-![image4!]()
+![image4!](./project_images/git_branching_strategy.png)
 
 *Security Testing*
 After running a Pull request ,  a security testing pipeline  is triggered and generate a report. 
-![image5!]()
+![image5!](./project_images/security_checking_report_generation.png)
 
 *Code Quality Testing*
 Besides security testing, Code quality is also checked by Sonarqube.
-![image6!]()
+![image6!](./project_images/code_quality_checking_by_SonarQube.png)
 
 *Pipeline Phase*
 - Build phase 
@@ -59,23 +72,23 @@ Besides security testing, Code quality is also checked by Sonarqube.
 
 ### Milestone 4 : Load Testing
 We run a python script for handling 1 lakh user request in this load testing challenge.
-![image7!]()
+![image7!](./project_images/user_loadtesting.png)
 
 *AWS Elastic cache* (Redis instance) is used for memory cache.
 
 After running thread, CPU utilization arises to nearly 300% without creating replica node by EKS.
-![image8!]()
+![image8!](./project_images/cpu_utilization.png)
 
 _Other milestones cover by this project are_ : 
 
 *IaC Tool (Terraform)* : Provisioned AWS services like : vpc, eks, rds_postgres etc in modular way.
-![image8!]()
+![image9!](./project_images/terraform.png)
 
 *Service Monitoring* : 
 - Prometheus scrapes data from EKS cluster
 - Visualize with Grafana Dashboard
 - Show various metrics data 
-![image9!]()
+![image10!](./project_images/monitoring_tool.png)
 
 *Zero downTime*:
 EKS itself manages Zero-downtime deployments through rolling updates, health checks, and traffic load management.

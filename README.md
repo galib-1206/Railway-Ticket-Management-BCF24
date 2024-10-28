@@ -10,7 +10,7 @@ _Develop a scalable and robust system that can handle lots of traffic and ensure
 Solution: Milestones Strategy. 
 
 ### Milestone 1 : System Design
-![image1!](./project_images/System Design.jpg)
+![System Design!](./project_images/System_Design.jpg)
 
 ### Milestone 2 : Implementation
 
@@ -25,8 +25,8 @@ Solution: Milestones Strategy.
 - Payment Service : Succeeds payment if lock is still available, otherwise not.
 
 *Inter Service Communication*: 
-![image2!]() 
-
+![image2!](project_images/Microservice_communication.jpg) 
+![image1!](../kubeadm_pics/image1.png)
 *Dockerizing Microservices in AWS*
 
 *Horizontal Pod Autoscaler (HPA)*
